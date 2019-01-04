@@ -1,0 +1,25 @@
+{
+    "name": "kairos/api-config",
+    "description": "The kairos api config is fitted to compile the configuration of several components to build a unique computed configuration by merging",
+    "type": "library",
+    "require": {
+        "php": "7.2"
+    },
+    "require-dev": {
+        "infection/infection": "^0.11",
+        "phpmd/phpmd": "^2.6",
+        "phpmetrics/phpmetrics": "^2.4",
+        "phpunit/phpunit": "^7.5",
+        "sebastian/phpcpd": "^4",
+        "squizlabs/php_codesniffer": "^3.4",
+        "kairos-project/tests": "^1@dev"
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "matthieu vallance",
+            "email": "matthieu.vallance@cscfa.fr"
+        }
+    ],
+    "minimum-stability": "dev"
+}
