@@ -21,5 +21,10 @@
             "email": "matthieu.vallance@cscfa.fr"
         }
     ],
+    "autoload" : {
+        "psr-4" : {
+            "KairosProject\\ApiConfig\\" : "KairosProject/ApiConfig/"
+        }
+    },
     "minimum-stability": "dev"
 }
