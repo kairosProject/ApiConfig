@@ -8,19 +8,19 @@ declare(strict_types=1);
  *
  * PHP version 7.2
  *
- * @category Api_Configuration_Definition
+ * @category Api_Configuration_Exception
  * @package  Kairos_Project
  * @author   matthieu vallance <matthieu.vallance@cscfa.fr>
  * @license  MIT <https://opensource.org/licenses/MIT>
  * @link     http://cscfa.fr
  */
-namespace KairosProject\ApiConfig\Definition;
+namespace KairosProject\ApiConfig\Definition\Exception;
 
 /**
- * Configuration definition interface
+ * Malformed array exception
  *
- * This interface define the base methods available when using the configuration definitions. It allow to specify the
- * options of a specific element and present the base methods for merging capability.
+ * This class represent the exception thrown in case of configuration importation from an array that cannot be parsed
+ * as a valid configuration.
  *
  * @category Api_Configuration_Definition
  * @package  Kairos_Project
@@ -28,11 +28,5 @@ namespace KairosProject\ApiConfig\Definition;
  * @license  MIT <https://opensource.org/licenses/MIT>
  * @link     http://cscfa.fr
  */
-interface ConfigurationDefinitionInterface extends
-    NameableConfigurationInterface,
-    RequireableConfigurationInterface,
-    DefaultConfigurationInterface,
-    DescribedConfigurationInterface,
-    ArrayConfigurationInterface
-{
-}
+class MalformedArrayException extends \RuntimeException
+{}
