@@ -17,10 +17,9 @@ declare(strict_types=1);
 namespace KairosProject\ApiConfig\Definition;
 
 /**
- * Configuration definition interface
+ * Described configuration interface
  *
- * This interface define the base methods available when using the configuration definitions. It allow to specify the
- * options of a specific element and present the base methods for merging capability.
+ * This interface define the base methods available for a configuration with a description.
  *
  * @category Api_Configuration_Definition
  * @package  Kairos_Project
@@ -28,10 +27,25 @@ namespace KairosProject\ApiConfig\Definition;
  * @license  MIT <https://opensource.org/licenses/MIT>
  * @link     http://cscfa.fr
  */
-interface ConfigurationDefinitionInterface extends
-    NameableConfigurationInterface,
-    RequireableConfigurationInterface,
-    DefaultConfigurationInterface,
-    DescribedConfigurationInterface
+interface DescribedConfigurationInterface
 {
+    /**
+     * Set description
+     *
+     * Set the element description as string value.
+     *
+     * @param string $description The element description
+     *
+     * @return $this
+     */
+    public function setDescription(string $description);
+
+    /**
+     * Get description
+     *
+     * Return the description of the element or null if not defined.
+     *
+     * @return string|null
+     */
+    public function getDescription() : ?string;
 }
