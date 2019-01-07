@@ -1,7 +1,7 @@
 #! /usr/bin/env bash
 
 function usage {
-  echo "Usage: $0 [-p path/to/php] [-c path/to/composer] [-h] [-d] [-m]" 1>&2
+  echo "Usage: $0 [-p path/to/php] [-g path/to/phpdbg] [-c path/to/composer] [-h] [-d] [-m]" 1>&2
   echo "-d : development mode" 1>&2
   echo "-m : no metrics mode" 1>&2
   exit 1
@@ -9,19 +9,23 @@ function usage {
 
 SOURCE_PATH="KairosProject/"
 PHP_PATH="/usr/bin/env php"
+PHPDBG_PATH="/usr/bin/env phpdbg"
 COMPOSER_PATH="/usr/bin/env composer"
 
-INFECTION="vendor/bin/infection --threads=4 --min-msi=100 --log-verbosity=1"
+INFECTION=" -qrr vendor/bin/infection --threads=4 --min-msi=100 --log-verbosity=all"
 METRICS="vendor/bin/phpmetrics --report-html=doc/metrics --junit=doc/phpunit_logfile.xml ."
 TESTSUITE=""
 
 while getopts "udmp:c:h:" opt; do
   case $opt in
     d)
-      INFECTION="vendor/bin/infection --threads=4 --min-msi=100 --only-covered --log-verbosity=1"
+      INFECTION=" -qrr vendor/bin/infection --threads=4 --min-msi=100 --only-covered --log-verbosity=all"
       ;;
     p)
       PHP_PATH=$OPTARG
+      ;;
+    g)
+      PHPDBG_PATH=$OPTARG
       ;;
     c)
       COMPOSER_PATH=$OPTARG
@@ -61,13 +65,13 @@ function test {
 	echo -e "\e[43m\e[30mRunning $1\e[0m\n\e[49m"
     TEST_RES=`$1`
     local TEST_RET=$?
-    
+
     if [ $TEST_RET != 0 ]
     then
         echo -e "\e[31m$2 FAILED\e[0m"
-        
+
         echo "$TEST_RES"
-        
+
         STATUS=$((STATUS + $3))
     else
         echo -e "\e[32m$2 SUCCESS\e[0m"
@@ -88,7 +92,7 @@ echo "$TEST_RES" >> doc/phpcbf.txt
 test "$PHP_PATH vendor/bin/phpunit $TESTSUITE" PHPUnit 100
 echo "$TEST_RES" > doc/phpunit.txt
 
-test "$PHP_PATH $INFECTION" Infection 100
+test "$PHPDBG_PATH $INFECTION" Infection 100
 echo "$TEST_RES" > doc/infection.txt
 
 test "$PHP_PATH vendor/bin/phpcs --standard=./csruleset.xml $SOURCE_PATH" PHPCS 100

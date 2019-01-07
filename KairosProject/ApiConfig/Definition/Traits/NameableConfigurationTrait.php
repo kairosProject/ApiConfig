@@ -14,7 +14,7 @@ declare(strict_types=1);
  * @license  MIT <https://opensource.org/licenses/MIT>
  * @link     http://cscfa.fr
  */
-namespace Symfony\Component\Config\Definition\Traits;
+namespace KairosProject\ApiConfig\Definition\Traits;
 
 /**
  * Nameable configuration trait
