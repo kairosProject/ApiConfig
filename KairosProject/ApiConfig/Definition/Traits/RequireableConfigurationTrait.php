@@ -55,14 +55,26 @@ trait RequireableConfigurationTrait
     /**
      * Set element value required
      *
-     * @param bool $state The required state of the element value. True to set it as required, false otherwise.
+     * Force the required state of the value for the current element.
      *
      * @return $this
      */
-    public function setRequired(bool $state = true)
+    public function setRequired()
     {
-        $this->requiredState = $state;
+        $this->requiredState = true;
 
         return $this;
+    }
+
+    /**
+     * Set element value un-required
+     *
+     * Force the required state of the value for the current element to false.
+     *
+     * @return $this
+     */
+    public function setUnRequired()
+    {
+        $this->requiredState = false;
     }
 }

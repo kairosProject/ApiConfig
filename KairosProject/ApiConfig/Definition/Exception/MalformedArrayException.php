@@ -29,4 +29,6 @@ namespace KairosProject\ApiConfig\Definition\Exception;
  * @link     http://cscfa.fr
  */
 class MalformedArrayException extends \RuntimeException
-{}
+{
+
+}

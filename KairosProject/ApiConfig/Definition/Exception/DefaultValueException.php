@@ -30,4 +30,6 @@ namespace KairosProject\ApiConfig\Definition\Exception;
  * @link     http://cscfa.fr
  */
 class DefaultValueException extends \RuntimeException
-{}
+{
+
+}
