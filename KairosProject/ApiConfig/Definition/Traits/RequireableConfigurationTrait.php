@@ -76,5 +76,7 @@ trait RequireableConfigurationTrait
     public function setUnRequired()
     {
         $this->requiredState = false;
+
+        return $this;
     }
 }
