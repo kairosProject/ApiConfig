@@ -3,7 +3,9 @@
     "description": "The kairos api config is fitted to compile the configuration of several components to build a unique computed configuration by merging",
     "type": "library",
     "require": {
-        "php": ">=7.2"
+        "php": ">=7.2",
+        "symfony/expression-language": "^4.2",
+        "symfony/options-resolver": "^4.2"
     },
     "require-dev": {
         "infection/infection": "^0.11",
