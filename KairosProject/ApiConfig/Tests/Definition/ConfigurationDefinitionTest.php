@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace KairosProject\ApiConfig\Tests\Definition;
 
 use KairosProject\ApiConfig\Definition\ConfigurationDefinition;
+use KairosProject\ApiConfig\Tests\Definition\Traits\DefaultTestTrait;
 use KairosProject\ApiConfig\Tests\Definition\Traits\DescribedTestTrait;
 use KairosProject\ApiConfig\Tests\Definition\Traits\NameableTestTrait;
 use KairosProject\ApiConfig\Tests\Definition\Traits\RequireableTestTrait;
@@ -37,7 +38,8 @@ class ConfigurationDefinitionTest extends AbstractTestClass
 {
     use NameableTestTrait,
         RequireableTestTrait,
-        DescribedTestTrait;
+        DescribedTestTrait,
+        DefaultTestTrait;
 
     /**
      * Get tested class

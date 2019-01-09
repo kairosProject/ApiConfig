@@ -75,7 +75,7 @@ trait DefaultConfigurationTrait
      */
     public function removeDefaultValue()
     {
-        $this->hasDefaultValue = false();
+        $this->hasDefaultValue = false;
         $this->defaultValue = null;
 
         return $this;
@@ -109,7 +109,7 @@ trait DefaultConfigurationTrait
         }
 
         $message = sprintf(
-            '%No default value assigned for the current element. Consider use of %s::hasDefaultValue()',
+            'No default value assigned for the current element. Consider use of %s::hasDefaultValue()',
             static::class
         );
         throw new DefaultValueException($message);
