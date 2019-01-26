@@ -17,9 +17,15 @@ declare(strict_types=1);
 
 namespace KairosProject\ApiConfig\Tests\Definition\Traits;
 
+use http\Exception\RuntimeException;
+use KairosProject\ApiConfig\Definition\ArrayMappingConfigurationInterface;
+use KairosProject\ApiConfig\Definition\ConfigurationDefinition;
+use KairosProject\ApiConfig\Definition\Exception\ConfigurationConversionException;
 use KairosProject\ApiConfig\Definition\Exception\MappingConfigurationFormatException;
 use KairosProject\ApiConfig\Factory\OptionsResolverFactoryInterface;
 use KairosProject\Tests\AbstractTestClass;
+use PHPUnit\Framework\MockObject\MockObject;
+use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -36,6 +42,148 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 trait ArrayTestTrait
 {
+    /**
+     * Exception operation provider
+     *
+     * Provide a set of operation to fill the evaluateMapping parameters. This provider is used in order to validate
+     * the exception throwing logic of the evaluateMapping regardless the executed operation.
+     *
+     * @return array
+     */
+    public function exceptionOperationProvider()
+    {
+        return [
+            [ArrayMappingConfigurationInterface::MAPPING_GET],
+            [ArrayMappingConfigurationInterface::MAPPING_SET]
+        ];
+    }
+
+    /**
+     * Test evaluateMapping on exception
+     *
+     * This method validate the evaluateMapping method of the DescribedConfigurationTrait class in case of thrown
+     * exception by the expression language.
+     *
+     * @param string $configKey The tested operation
+     *
+     * @return       void
+     * @dataProvider exceptionOperationProvider
+     */
+    public function testEvaluateMappingOnException(string $configKey)
+    {
+        $expressionLanguage = $this->createMock(ExpressionLanguage::class);
+        $resolverFactory = $this->createMock(OptionsResolverFactoryInterface::class);
+        $instance = $this->getInstance(
+            [
+                'expressionLanguage' => $expressionLanguage,
+                'optionsResolverFactory' => $resolverFactory
+            ]
+        );
+        $mappingMethod = $this->getClassMethod('getMappingConfiguration');
+        $mapping = $mappingMethod->invoke($instance);
+
+        $this->expectException(ConfigurationConversionException::class);
+        $this->expectExceptionCode(0);
+        $this->expectExceptionMessage(
+            sprintf(
+                'Expression cannot be evaluated for key %s. ()',
+                array_keys($mapping)[0]
+            )
+        );
+
+        $resolver = $this->createMock(OptionsResolver::class);
+        $this->getInvocationBuilder($resolver, $this->any(), 'resolve')
+            ->willReturn([$configKey => '']);
+        $this->getInvocationBuilder($resolverFactory, $this->any(), 'getOptionsResolver')
+            ->willReturn($resolver);
+
+        $this->getInvocationBuilder($expressionLanguage, $this->once(), 'evaluate')
+            ->willThrowException(new \RuntimeException('expected'));
+
+        $method = $this->getClassMethod('evaluateMapping');
+        $method->invokeArgs(
+            $instance,
+            [
+                $configKey,
+                []
+            ]
+        );
+    }
+
+    /**
+     * Test evaluateMapping on SET
+     *
+     * This method validate the evaluateMapping method of the DescribedConfigurationTrait class
+     *
+     * @return void
+     */
+    public function testEvaluateMappingOnSet()
+    {
+        $expressionLanguage = $this->createMock(ExpressionLanguage::class);
+        $resolverFactory = $this->createMock(OptionsResolverFactoryInterface::class);
+        $instance = $this->getInstance(
+            [
+                'expressionLanguage' => $expressionLanguage,
+                'optionsResolverFactory' => $resolverFactory
+            ]
+        );
+        $payload = ['config' => $instance, 'array' => [$this->createMock(\stdClass::class)]];
+        $configKey = ArrayMappingConfigurationInterface::MAPPING_SET;
+
+        $mappingMethod = $this->getClassMethod('getMappingConfiguration');
+        $mapping = $mappingMethod->invoke($instance);
+        $returnValues = array_fill(0, count($mapping), null);
+        $resultExpectation = array_combine(array_keys($mapping), $returnValues);
+
+        $this->runEvaluateMapping(
+            $instance,
+            $expressionLanguage,
+            $resolverFactory,
+            $returnValues,
+            $mapping,
+            $payload,
+            $resultExpectation,
+            $configKey
+        );
+    }
+
+    /**
+     * Test evaluateMapping on GET
+     *
+     * This method validate the evaluateMapping method of the DescribedConfigurationTrait class
+     *
+     * @return void
+     */
+    public function testEvaluateMappingOnGet()
+    {
+        $expressionLanguage = $this->createMock(ExpressionLanguage::class);
+        $resolverFactory = $this->createMock(OptionsResolverFactoryInterface::class);
+        $instance = $this->getInstance(
+            [
+                'expressionLanguage' => $expressionLanguage,
+                'optionsResolverFactory' => $resolverFactory
+            ]
+        );
+        $payload = ['config' => $instance];
+        $configKey = ArrayMappingConfigurationInterface::MAPPING_GET;
+
+        $mappingMethod = $this->getClassMethod('getMappingConfiguration');
+        $mapping = $mappingMethod->invoke($instance);
+        $returnValues = range(1, count($mapping));
+        $resultExpectation = array_combine(array_keys($mapping), $returnValues);
+
+        $this->runEvaluateMapping(
+            $instance,
+            $expressionLanguage,
+            $resolverFactory,
+            $returnValues,
+            $mapping,
+            $payload,
+            $resultExpectation,
+            $configKey
+        );
+    }
+
     /**
      * Test buildConfigurationValidator
      *
@@ -149,6 +297,70 @@ trait ArrayTestTrait
         $this->assertPrivateMethod('getMapping');
 
         $this->assertEquals($mapping, $method->invoke($instance));
+    }
+    /**
+     * Run evaluate mapping
+     *
+     * Execute the evaluateMapping method test with the given configuration
+     *
+     * @param ConfigurationDefinition $instance           The tested instance
+     * @param MockObject              $expressionLanguage The injected expression language
+     * @param MockObject              $resolverFactory    The injected optionsResolver factory
+     * @param array                   $returnValues       The expression language consecutive return values
+     * @param array                   $mapping            The tested instance mapping
+     * @param array                   $payload            The evaluation call payload
+     * @param array                   $resultExpectation  The expected result
+     * @param string                  $configKey          The evaluation operation key
+     *
+     * @return void
+     */
+    private function runEvaluateMapping(
+        ConfigurationDefinition $instance,
+        MockObject $expressionLanguage,
+        MockObject $resolverFactory,
+        array $returnValues,
+        array $mapping,
+        array $payload,
+        array $resultExpectation,
+        string $configKey
+    ) {
+        $optionResolver = $this->createMock(OptionsResolver::class);
+        $this->getInvocationBuilder($optionResolver, $this->exactly(count($mapping)), 'resolve')
+            ->willReturnOnConsecutiveCalls(...array_values($mapping));
+        $this->getInvocationBuilder($resolverFactory, $this->any(), 'getOptionsResolver')
+            ->willReturn($optionResolver);
+
+        $consecutiveArguments = [];
+        foreach ($mapping as $config) {
+            $consecutiveArguments[] = [
+                $this->equalTo($config[$configKey]),
+                $this->identicalTo($payload)
+            ];
+        }
+        $this->getInvocationBuilder(
+            $expressionLanguage,
+            $this->exactly(
+                count($mapping)
+            ),
+            'evaluate'
+        )->withConsecutive(
+            ...$consecutiveArguments
+        )->willReturnOnConsecutiveCalls(
+            ...$returnValues
+        );
+
+        $method = $this->getClassMethod('evaluateMapping');
+        $result = $method->invokeArgs(
+            $instance,
+            [
+                $configKey,
+                $payload
+            ]
+        );
+        $this->assertEquals(
+            $resultExpectation,
+            $result
+        );
     }
 
     /**
