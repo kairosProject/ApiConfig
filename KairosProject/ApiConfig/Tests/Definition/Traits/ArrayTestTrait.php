@@ -17,7 +17,6 @@ declare(strict_types=1);
 
 namespace KairosProject\ApiConfig\Tests\Definition\Traits;
 
-use http\Exception\RuntimeException;
 use KairosProject\ApiConfig\Definition\ArrayMappingConfigurationInterface;
 use KairosProject\ApiConfig\Definition\ConfigurationDefinition;
 use KairosProject\ApiConfig\Definition\Exception\ConfigurationConversionException;
