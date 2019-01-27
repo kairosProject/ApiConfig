@@ -22,6 +22,7 @@ use KairosProject\ApiConfig\Definition\ArrayMappingConfigurationInterface;
 use KairosProject\ApiConfig\Definition\ConfigurationDefinition;
 use KairosProject\ApiConfig\Definition\Exception\ConfigurationConversionException;
 use KairosProject\ApiConfig\Definition\Exception\MappingConfigurationFormatException;
+use KairosProject\ApiConfig\Factory\OptionsResolverFactory;
 use KairosProject\ApiConfig\Factory\OptionsResolverFactoryInterface;
 use KairosProject\Tests\AbstractTestClass;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -43,6 +44,35 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 trait ArrayTestTrait
 {
     /**
+     * Test fromArray
+     *
+     * This method validate the fromArray method of the ArrayConfigurationTrait class
+     *
+     * @return void
+     */
+    public function testFromArray()
+    {
+        $instance = new ConfigurationDefinition('testName', new ExpressionLanguage(), new OptionsResolverFactory());
+
+        $arguments = [
+            'defaultValue' => 'testDefault',
+            'hasDefaultValue' => true,
+            'description' => 'Test description',
+            'requiredState' => false
+        ];
+
+        $this->assertSame($instance, $instance->fromArray($arguments));
+
+        $this->assertEquals($arguments['defaultValue'], $this->getClassProperty('defaultValue')->getValue($instance));
+        $this->assertEquals(
+            $arguments['hasDefaultValue'],
+            $this->getClassProperty('hasDefaultValue')->getValue($instance)
+        );
+        $this->assertEquals($arguments['description'], $this->getClassProperty('description')->getValue($instance));
+        $this->assertEquals($arguments['requiredState'], $this->getClassProperty('requiredState')->getValue($instance));
+    }
+
+    /**
      * Exception operation provider
      *
      * Provide a set of operation to fill the evaluateMapping parameters. This provider is used in order to validate
@@ -61,7 +91,7 @@ trait ArrayTestTrait
     /**
      * Test evaluateMapping on exception
      *
-     * This method validate the evaluateMapping method of the DescribedConfigurationTrait class in case of thrown
+     * This method validate the evaluateMapping method of the ArrayConfigurationTrait class in case of thrown
      * exception by the expression language.
      *
      * @param string $configKey The tested operation
@@ -113,7 +143,7 @@ trait ArrayTestTrait
     /**
      * Test evaluateMapping on SET
      *
-     * This method validate the evaluateMapping method of the DescribedConfigurationTrait class
+     * This method validate the evaluateMapping method of the ArrayConfigurationTrait class
      *
      * @return void
      */
@@ -150,7 +180,7 @@ trait ArrayTestTrait
     /**
      * Test evaluateMapping on GET
      *
-     * This method validate the evaluateMapping method of the DescribedConfigurationTrait class
+     * This method validate the evaluateMapping method of the ArrayConfigurationTrait class
      *
      * @return void
      */
@@ -187,7 +217,7 @@ trait ArrayTestTrait
     /**
      * Test buildConfigurationValidator
      *
-     * This method validate the buildConfigurationArrayValidator of the DescribedConfigurationTrait class
+     * This method validate the buildConfigurationArrayValidator of the ArrayConfigurationTrait class
      *
      * @return void
      */
@@ -227,7 +257,7 @@ trait ArrayTestTrait
     /**
      * Test getMapping exception
      *
-     * This method validate the getMapping of the DescribedConfigurationTrait class in case of malformed configuration
+     * This method validate the getMapping of the ArrayConfigurationTrait class in case of malformed configuration
      *
      * @return void
      */
@@ -256,7 +286,7 @@ trait ArrayTestTrait
     /**
      * Test getMapping
      *
-     * This method validate the getMapping of the DescribedConfigurationTrait class.
+     * This method validate the getMapping of the ArrayConfigurationTrait class.
      *
      * @return void
      */

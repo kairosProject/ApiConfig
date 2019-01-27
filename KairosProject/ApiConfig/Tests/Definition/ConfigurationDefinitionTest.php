@@ -75,12 +75,12 @@ class ConfigurationDefinitionTest extends AbstractTestClass
         return [
             'defaultValue' => [
                 'get' => 'config.hasDefaultValue() ? config.getDefaultValue() : null',
-                'set' => 'array["hasDefaultValue"] ? config.setDefaultValue(array["hasDefaultValue"]) : ""',
+                'set' => 'array["hasDefaultValue"] ? config.setDefaultValue(array["defaultValue"]) : ""',
                 'types' => []
             ],
             'hasDefaultValue' => [
                 'get' => 'config.hasDefaultValue()',
-                'set' => '',
+                'set' => 'null',
                 'types' => ['bool']
             ],
             'description' => [

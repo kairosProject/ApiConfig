@@ -246,7 +246,7 @@ trait ArrayConfigurationTrait
      *          ],
      *          'hasDefaultValue' => [
      *              ArrayMappingConfigurationInterface::MAPPING_GET => 'config.hasDefaultValue()',
-     *              ArrayMappingConfigurationInterface::MAPPING_SET => '',
+     *              ArrayMappingConfigurationInterface::MAPPING_SET => 'null',
      *              ArrayMappingConfigurationInterface::MAPPING_TYPES => ['bool']
      *          ],
      *          ...

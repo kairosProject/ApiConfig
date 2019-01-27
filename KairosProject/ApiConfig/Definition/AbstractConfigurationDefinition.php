@@ -154,7 +154,7 @@ abstract class AbstractConfigurationDefinition
      */
     private function getDefaultConfigurationMapping() : array
     {
-        $defaultValueSetter = 'array["hasDefaultValue"] ? config.setDefaultValue(array["hasDefaultValue"]) : ""';
+        $defaultValueSetter = 'array["hasDefaultValue"] ? config.setDefaultValue(array["defaultValue"]) : ""';
 
         $defaultValue = [
             MappingKey::MAPPING_GET => 'config.hasDefaultValue() ? config.getDefaultValue() : null',
@@ -164,7 +164,7 @@ abstract class AbstractConfigurationDefinition
 
         $hasDefaultValue = [
             MappingKey::MAPPING_GET => 'config.hasDefaultValue()',
-            MappingKey::MAPPING_SET => '',
+            MappingKey::MAPPING_SET => 'null',
             MappingKey::MAPPING_TYPES => ['bool']
         ];
 
