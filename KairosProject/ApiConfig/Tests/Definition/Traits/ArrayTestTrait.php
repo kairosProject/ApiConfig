@@ -43,6 +43,31 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 trait ArrayTestTrait
 {
     /**
+     * Test toArray
+     *
+     * This method validate the toArray method of the ArrayConfigurationTrait class
+     *
+     * @return void
+     */
+    public function testToArray()
+    {
+        $instance = new ConfigurationDefinition('testName', new ExpressionLanguage(), new OptionsResolverFactory());
+
+        $properties = [
+            'defaultValue' => $this->createMock(\stdClass::class),
+            'hasDefaultValue' => true,
+            'description' => 'Test description',
+            'requiredState' => true
+        ];
+
+        foreach ($properties as $propertyName => $propertyValue) {
+            $this->getClassProperty($propertyName)->setValue($instance, $propertyValue);
+        }
+
+        $this->assertSame($properties, $instance->toArray());
+    }
+
+    /**
      * Malformed array provider
      *
      * This method provide a set of malformed array and message pattern to validate the fromArray method of the
