@@ -21,10 +21,10 @@ use http\Exception\RuntimeException;
 use KairosProject\ApiConfig\Definition\ArrayMappingConfigurationInterface;
 use KairosProject\ApiConfig\Definition\ConfigurationDefinition;
 use KairosProject\ApiConfig\Definition\Exception\ConfigurationConversionException;
+use KairosProject\ApiConfig\Definition\Exception\MalformedArrayException;
 use KairosProject\ApiConfig\Definition\Exception\MappingConfigurationFormatException;
 use KairosProject\ApiConfig\Factory\OptionsResolverFactory;
 use KairosProject\ApiConfig\Factory\OptionsResolverFactoryInterface;
-use KairosProject\Tests\AbstractTestClass;
 use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
@@ -43,6 +43,61 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 trait ArrayTestTrait
 {
+    /**
+     * Malformed array provider
+     *
+     * This method provide a set of malformed array and message pattern to validate the fromArray method of the
+     * ArrayConfigurationTrait class in case of malformed array.
+     *
+     * @return array
+     */
+    public function provideMalformedArray()
+    {
+        return [
+            [
+                [
+                    'defaultVal' => 'testDefault',
+                    'hasDefaultValue' => true,
+                    'description' => 'Test description',
+                    'requiredState' => false
+                ],
+                '/option "defaultVal" does not exist/',
+                0
+            ],
+            [
+                [
+                    'defaultValue' => 'testDefault',
+                    'hasDefaultValue' => 'value',
+                    'description' => 'Test description',
+                    'requiredState' => false
+                ],
+                '/be of type "bool"/',
+                0
+            ]
+        ];
+    }
+
+    /**
+     * Test from malformed array
+     *
+     * This method validate the fromArray method of the ArrayConfigurationTrait class in case of malformed array
+     *
+     * @param array  $arguments The list of arguments to pass to the fromArray method
+     * @param string $message   The expected message pattern of the exception
+     * @param int    $code      The expected exception code
+     *
+     * @return       void
+     * @dataProvider provideMalformedArray
+     */
+    public function testFromMalformedArray(array $arguments, string $message, int $code)
+    {
+        $this->expectException(MalformedArrayException::class);
+        $this->expectExceptionMessageRegExp($message);
+        $this->expectExceptionCode($code);
+        $instance = new ConfigurationDefinition('testName', new ExpressionLanguage(), new OptionsResolverFactory());
+        $instance->fromArray($arguments);
+    }
+
     /**
      * Test fromArray
      *
