@@ -57,7 +57,8 @@ trait ArrayTestTrait
             'defaultValue' => $this->createMock(\stdClass::class),
             'hasDefaultValue' => true,
             'description' => 'Test description',
-            'requiredState' => true
+            'requiredState' => true,
+            'priority' => 1
         ];
 
         foreach ($properties as $propertyName => $propertyValue) {
@@ -83,7 +84,8 @@ trait ArrayTestTrait
                     'defaultVal' => 'testDefault',
                     'hasDefaultValue' => true,
                     'description' => 'Test description',
-                    'requiredState' => false
+                    'requiredState' => false,
+                    'priority' => 1
                 ],
                 '/option "defaultVal" does not exist/',
                 0
@@ -93,7 +95,8 @@ trait ArrayTestTrait
                     'defaultValue' => 'testDefault',
                     'hasDefaultValue' => 'value',
                     'description' => 'Test description',
-                    'requiredState' => false
+                    'requiredState' => false,
+                    'priority' => 1
                 ],
                 '/be of type "bool"/',
                 0
@@ -137,7 +140,8 @@ trait ArrayTestTrait
             'defaultValue' => 'testDefault',
             'hasDefaultValue' => true,
             'description' => 'Test description',
-            'requiredState' => false
+            'requiredState' => false,
+            'priority' => 1
         ];
 
         $this->assertSame($instance, $instance->fromArray($arguments));
@@ -149,6 +153,7 @@ trait ArrayTestTrait
         );
         $this->assertEquals($arguments['description'], $this->getClassProperty('description')->getValue($instance));
         $this->assertEquals($arguments['requiredState'], $this->getClassProperty('requiredState')->getValue($instance));
+        $this->assertEquals($arguments['priority'], $this->getClassProperty('priority')->getValue($instance));
     }
 
     /**
@@ -307,20 +312,22 @@ trait ArrayTestTrait
         $this->getInvocationBuilder($optionsResolver, $this->once(), 'setRequired')
             ->with($this->equalTo(array_keys($this->getMapping())));
 
-        $this->getInvocationBuilder($optionsResolver, $this->exactly(3), 'setAllowedTypes')
+        $this->getInvocationBuilder($optionsResolver, $this->exactly(4), 'setAllowedTypes')
             ->withConsecutive(
                 [$this->equalTo('hasDefaultValue'), $this->equalTo(['bool'])],
                 [$this->equalTo('description'), $this->equalTo(['string', 'null'])],
-                [$this->equalTo('requiredState'), $this->equalTo(['bool'])]
+                [$this->equalTo('requiredState'), $this->equalTo(['bool'])],
+                [$this->equalTo('priority'), $this->equalTo(['int'])]
             );
 
         $miscResolver = $this->createMock(OptionsResolver::class);
-        $this->getInvocationBuilder($miscResolver, $this->exactly(4), 'resolve')
+        $this->getInvocationBuilder($miscResolver, $this->exactly(5), 'resolve')
             ->willReturnOnConsecutiveCalls(
                 $mapping['defaultValue'],
                 $mapping['hasDefaultValue'],
                 $mapping['description'],
-                $mapping['requiredState']
+                $mapping['requiredState'],
+                $mapping['priority']
             );
 
         $resolverFactory = $this->createMock(OptionsResolverFactoryInterface::class);
@@ -388,12 +395,14 @@ trait ArrayTestTrait
                 [$this->equalTo($mapping['defaultValue'])],
                 [$this->equalTo($mapping['hasDefaultValue'])],
                 [$this->equalTo($mapping['description'])],
-                [$this->equalTo($mapping['requiredState'])]
+                [$this->equalTo($mapping['requiredState'])],
+                [$this->equalTo($mapping['priority'])]
             )->willReturnOnConsecutiveCalls(
                 $mapping['defaultValue'],
                 $mapping['hasDefaultValue'],
                 $mapping['description'],
-                $mapping['requiredState']
+                $mapping['requiredState'],
+                $mapping['priority']
             );
 
 

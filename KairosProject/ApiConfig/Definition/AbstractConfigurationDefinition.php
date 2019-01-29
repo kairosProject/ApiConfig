@@ -20,6 +20,7 @@ use KairosProject\ApiConfig\Definition\Traits\ArrayConfigurationTrait;
 use KairosProject\ApiConfig\Definition\Traits\DefaultConfigurationTrait;
 use KairosProject\ApiConfig\Definition\Traits\DescribedConfigurationTrait;
 use KairosProject\ApiConfig\Definition\Traits\NameableConfigurationTrait;
+use KairosProject\ApiConfig\Definition\Traits\PriorityConfigurationTrait;
 use KairosProject\ApiConfig\Definition\Traits\RequireableConfigurationTrait;
 use KairosProject\ApiConfig\Factory\OptionsResolverFactoryInterface;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
@@ -42,7 +43,8 @@ abstract class AbstractConfigurationDefinition
         DescribedConfigurationTrait,
         NameableConfigurationTrait,
         RequireableConfigurationTrait,
-        ArrayConfigurationTrait;
+        ArrayConfigurationTrait,
+        PriorityConfigurationTrait;
 
     /**
      * AbstractConfigurationDefinition constructor.
@@ -105,8 +107,27 @@ abstract class AbstractConfigurationDefinition
         return array_merge(
             $this->getDefaultConfigurationMapping(),
             $this->getDescribedConfigurationMapping(),
-            $this->getRequireableConfigurationMapping()
+            $this->getRequireableConfigurationMapping(),
+            $this->getPriorityConfiguration()
         );
+    }
+
+    /**
+     * Get priority configuration
+     *
+     * Return the array to configure the relevant mapping, regarding the priority support.
+     *
+     * @return array
+     */
+    private function getPriorityConfiguration() : array
+    {
+        $priority = [
+            MappingKey::MAPPING_GET => 'config.getPriority()',
+            MappingKey::MAPPING_SET => 'config.setPriority(array["priority"])',
+            MappingKey::MAPPING_TYPES => ['int']
+        ];
+
+        return ['priority' => $priority];
     }
 
     /**

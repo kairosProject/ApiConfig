@@ -16,8 +16,6 @@ declare(strict_types=1);
  */
 namespace KairosProject\ApiConfig\Tests\Definition\Traits;
 
-use KairosProject\Tests\AbstractTestClass;
-
 /**
  * Configuration definition test
  *
