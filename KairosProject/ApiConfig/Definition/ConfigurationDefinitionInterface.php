@@ -33,6 +33,7 @@ interface ConfigurationDefinitionInterface extends
     RequireableConfigurationInterface,
     DefaultConfigurationInterface,
     DescribedConfigurationInterface,
-    ArrayConfigurationInterface
+    ArrayConfigurationInterface,
+    NestedDefinitionInterface
 {
 }

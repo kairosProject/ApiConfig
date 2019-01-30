@@ -20,6 +20,7 @@ use KairosProject\ApiConfig\Definition\Traits\ArrayConfigurationTrait;
 use KairosProject\ApiConfig\Definition\Traits\DefaultConfigurationTrait;
 use KairosProject\ApiConfig\Definition\Traits\DescribedConfigurationTrait;
 use KairosProject\ApiConfig\Definition\Traits\NameableConfigurationTrait;
+use KairosProject\ApiConfig\Definition\Traits\NestedConfigurationTrait;
 use KairosProject\ApiConfig\Definition\Traits\PriorityConfigurationTrait;
 use KairosProject\ApiConfig\Definition\Traits\RequireableConfigurationTrait;
 use KairosProject\ApiConfig\Factory\OptionsResolverFactoryInterface;
@@ -37,14 +38,15 @@ use KairosProject\ApiConfig\Definition\ArrayMappingConfigurationInterface as Map
  * @license  MIT <https://opensource.org/licenses/MIT>
  * @link     http://cscfa.fr
  */
-abstract class AbstractConfigurationDefinition
+abstract class AbstractConfigurationDefinition implements ConfigurationDefinitionInterface
 {
     use DefaultConfigurationTrait,
         DescribedConfigurationTrait,
         NameableConfigurationTrait,
         RequireableConfigurationTrait,
         ArrayConfigurationTrait,
-        PriorityConfigurationTrait;
+        PriorityConfigurationTrait,
+        NestedConfigurationTrait;
 
     /**
      * AbstractConfigurationDefinition constructor.
