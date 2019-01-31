@@ -110,8 +110,20 @@ abstract class AbstractConfigurationDefinition implements ConfigurationDefinitio
             $this->getDefaultConfigurationMapping(),
             $this->getDescribedConfigurationMapping(),
             $this->getRequireableConfigurationMapping(),
-            $this->getPriorityConfiguration()
+            $this->getPriorityConfiguration(),
+            $this->getParentConfiguration()
         );
+    }
+
+    private function getParentConfiguration() : array
+    {
+        return [
+            'parent' => [
+                MappingKey::MAPPING_GET => 'config.getParent()',
+                MappingKey::MAPPING_SET => 'config.setParent(array["parent"]',
+                MappingKey::MAPPING_TYPES => ['null', DefinitionContainerInterface::class]
+            ]
+        ];
     }
 
     /**
