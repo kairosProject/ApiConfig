@@ -80,7 +80,7 @@ trait NestedConfigurationTrait
      *
      * @return void
      */
-    private function detachSelf() : void
+    protected function detachSelf() : void
     {
         if ($this->parent) {
             $this->parent->detachChild($this);
@@ -94,7 +94,7 @@ trait NestedConfigurationTrait
      *
      * @return void
      */
-    private function attachSelf() : void
+    protected function attachSelf() : void
     {
         if ($this->parent && !$this->parent->hasChild($this)) {
             $this->parent->addChild($this);

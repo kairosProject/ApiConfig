@@ -35,6 +35,28 @@ use PHPUnit\Framework\MockObject\MockObject;
 trait NestedTestTrait
 {
     /**
+     * Test setParent on orphan
+     *
+     * This method validate the setParent method of the DefinitionContainer class on an orphan definition
+     *
+     * @return               void
+     * @runInSeparateProcess
+     */
+    public function testSetParentOnOrphan() : void
+    {
+        $instance = \Mockery::mock(AbstractConfigurationDefinition::class);
+        $instance->shouldAllowMockingProtectedMethods();
+        $instance->shouldReceive('detachSelf')->once();
+        $instance->shouldReceive('attachSelf')->once();
+        $instance->makePartial();
+
+        $parent = $this->createMock(DefinitionContainerInterface::class);
+
+        $this->assertSame($instance, $instance->setParent($parent));
+
+        \Mockery::close();
+    }
+    /**
      * Provide parents
      *
      * Return a set of available parents to validate the getParent method of the NestedConfiguration support.

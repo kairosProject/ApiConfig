@@ -14,6 +14,14 @@
     <rule ref="rulesets/design.xml/CouplingBetweenObjects"/>
     <rule ref="rulesets/controversial.xml" />
     <rule ref="rulesets/codesize.xml" />
-    <rule ref="rulesets/cleancode.xml"/>
+    <rule ref="rulesets/cleancode.xml">
+        <exclude name="StaticAccess"/>
+    </rule>
     <rule ref="rulesets/naming.xml"/>
+
+    <rule ref="rulesets/cleancode.xml/StaticAccess">
+        <properties>
+            <property name="exceptions" value="\Mockery" />
+        </properties>
+    </rule>
 </ruleset>

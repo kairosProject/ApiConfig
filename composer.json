@@ -5,7 +5,8 @@
     "require": {
         "php": ">=7.2",
         "symfony/expression-language": "^4.2",
-        "symfony/options-resolver": "^4.2"
+        "symfony/options-resolver": "^4.2",
+        "mockery/mockery": ">=1.0@stable"
     },
     "require-dev": {
         "infection/infection": "^0.11",
