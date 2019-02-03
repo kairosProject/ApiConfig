@@ -115,12 +115,19 @@ abstract class AbstractConfigurationDefinition implements ConfigurationDefinitio
         );
     }
 
+    /**
+     * Get parent configuration
+     *
+     * Return the array to configure the relevant mapping, regarding the parent support.
+     *
+     * @return array
+     */
     private function getParentConfiguration() : array
     {
         return [
             'parent' => [
                 MappingKey::MAPPING_GET => 'config.getParent()',
-                MappingKey::MAPPING_SET => 'config.setParent(array["parent"]',
+                MappingKey::MAPPING_SET => 'config.setParent(array["parent"])',
                 MappingKey::MAPPING_TYPES => ['null', DefinitionContainerInterface::class]
             ]
         ];

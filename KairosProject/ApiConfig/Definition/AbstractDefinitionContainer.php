@@ -17,6 +17,8 @@ declare(strict_types=1);
 namespace KairosProject\ApiConfig\Definition;
 
 use KairosProject\ApiConfig\Definition\ArrayMappingConfigurationInterface as ConfigInterface;
+use KairosProject\ApiConfig\Definition\AbstractConfigurationDefinition as Definition;
+use KairosProject\ApiConfig\Definition\Traits\ConfigurationContainerTrait;
 
 /**
  * Abstract definition container
@@ -30,10 +32,10 @@ use KairosProject\ApiConfig\Definition\ArrayMappingConfigurationInterface as Con
  * @license  MIT <https://opensource.org/licenses/MIT>
  * @link     http://cscfa.fr
  */
-abstract class AbstractDefinitionContainer
-    extends AbstractConfigurationDefinition
-    implements DefinitionContainerInterface
+abstract class AbstractDefinitionContainer extends Definition implements DefinitionContainerInterface
 {
+    use ConfigurationContainerTrait;
+
     /**
      * Get mapping configuration
      *
@@ -79,5 +81,4 @@ abstract class AbstractDefinitionContainer
 
         return $mapping;
     }
-
 }

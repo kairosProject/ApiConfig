@@ -19,6 +19,7 @@ namespace KairosProject\ApiConfig\Tests\Definition\Traits;
 
 use KairosProject\ApiConfig\Definition\ArrayMappingConfigurationInterface;
 use KairosProject\ApiConfig\Definition\ConfigurationDefinition;
+use KairosProject\ApiConfig\Definition\DefinitionContainerInterface;
 use KairosProject\ApiConfig\Definition\Exception\ConfigurationConversionException;
 use KairosProject\ApiConfig\Definition\Exception\MalformedArrayException;
 use KairosProject\ApiConfig\Definition\Exception\MappingConfigurationFormatException;
@@ -47,9 +48,12 @@ trait ArrayTestTrait
      *
      * This method validate the toArray method of the ArrayConfigurationTrait class
      *
-     * @return void
+     * @param DefinitionContainerInterface|null $parent The parent instance to inject
+     *
+     * @return       void
+     * @dataProvider provideParent
      */
-    public function testToArray()
+    public function testToArray(?DefinitionContainerInterface $parent)
     {
         $instance = new ConfigurationDefinition('testName', new ExpressionLanguage(), new OptionsResolverFactory());
 
@@ -58,7 +62,8 @@ trait ArrayTestTrait
             'hasDefaultValue' => true,
             'description' => 'Test description',
             'requiredState' => true,
-            'priority' => 1
+            'priority' => 1,
+            'parent' => $parent
         ];
 
         foreach ($properties as $propertyName => $propertyValue) {
@@ -85,7 +90,8 @@ trait ArrayTestTrait
                     'hasDefaultValue' => true,
                     'description' => 'Test description',
                     'requiredState' => false,
-                    'priority' => 1
+                    'priority' => 1,
+                    'parent' => null
                 ],
                 '/option "defaultVal" does not exist/',
                 0
@@ -96,9 +102,22 @@ trait ArrayTestTrait
                     'hasDefaultValue' => 'value',
                     'description' => 'Test description',
                     'requiredState' => false,
-                    'priority' => 1
+                    'priority' => 1,
+                    'parent' => $this->createMock(DefinitionContainerInterface::class)
                 ],
                 '/be of type "bool"/',
+                0
+            ],
+            [
+                [
+                    'defaultValue' => 'testDefault',
+                    'hasDefaultValue' => true,
+                    'description' => 'Test description',
+                    'requiredState' => false,
+                    'priority' => 1,
+                    'parent' => $this->createMock(\stdClass::class)
+                ],
+                '/be of type "null" or "KairosProject\\\\ApiConfig\\\\Definition\\\\DefinitionContainerInterface"/',
                 0
             ]
         ];
@@ -126,13 +145,31 @@ trait ArrayTestTrait
     }
 
     /**
+     * Provide parent
+     *
+     * Return a set of available parent values
+     *
+     * @return array
+     */
+    public function provideParent()
+    {
+        return [
+            [null],
+            [$this->createMock(DefinitionContainerInterface::class)]
+        ];
+    }
+
+    /**
      * Test fromArray
      *
      * This method validate the fromArray method of the ArrayConfigurationTrait class
      *
-     * @return void
+     * @param DefinitionContainerInterface|null $parent The assigned parent value
+     *
+     * @return       void
+     * @dataProvider provideParent
      */
-    public function testFromArray()
+    public function testFromArray(?DefinitionContainerInterface $parent)
     {
         $instance = new ConfigurationDefinition('testName', new ExpressionLanguage(), new OptionsResolverFactory());
 
@@ -141,7 +178,8 @@ trait ArrayTestTrait
             'hasDefaultValue' => true,
             'description' => 'Test description',
             'requiredState' => false,
-            'priority' => 1
+            'priority' => 1,
+            'parent' => $parent
         ];
 
         $this->assertSame($instance, $instance->fromArray($arguments));
@@ -154,6 +192,11 @@ trait ArrayTestTrait
         $this->assertEquals($arguments['description'], $this->getClassProperty('description')->getValue($instance));
         $this->assertEquals($arguments['requiredState'], $this->getClassProperty('requiredState')->getValue($instance));
         $this->assertEquals($arguments['priority'], $this->getClassProperty('priority')->getValue($instance));
+
+        $this->assertEquals($arguments['parent'], $this->getClassProperty('parent')->getValue($instance));
+        if (is_object($parent)) {
+            $this->assertSame($arguments['parent'], $this->getClassProperty('parent')->getValue($instance));
+        }
     }
 
     /**
@@ -312,22 +355,24 @@ trait ArrayTestTrait
         $this->getInvocationBuilder($optionsResolver, $this->once(), 'setRequired')
             ->with($this->equalTo(array_keys($this->getMapping())));
 
-        $this->getInvocationBuilder($optionsResolver, $this->exactly(4), 'setAllowedTypes')
+        $this->getInvocationBuilder($optionsResolver, $this->exactly(count($mapping) - 1), 'setAllowedTypes')
             ->withConsecutive(
                 [$this->equalTo('hasDefaultValue'), $this->equalTo(['bool'])],
                 [$this->equalTo('description'), $this->equalTo(['string', 'null'])],
                 [$this->equalTo('requiredState'), $this->equalTo(['bool'])],
-                [$this->equalTo('priority'), $this->equalTo(['int'])]
+                [$this->equalTo('priority'), $this->equalTo(['int'])],
+                [$this->equalTo('parent'), $this->equalTo(['null', DefinitionContainerInterface::class])]
             );
 
         $miscResolver = $this->createMock(OptionsResolver::class);
-        $this->getInvocationBuilder($miscResolver, $this->exactly(5), 'resolve')
+        $this->getInvocationBuilder($miscResolver, $this->exactly(count($mapping)), 'resolve')
             ->willReturnOnConsecutiveCalls(
                 $mapping['defaultValue'],
                 $mapping['hasDefaultValue'],
                 $mapping['description'],
                 $mapping['requiredState'],
-                $mapping['priority']
+                $mapping['priority'],
+                $mapping['parent']
             );
 
         $resolverFactory = $this->createMock(OptionsResolverFactoryInterface::class);
@@ -396,13 +441,15 @@ trait ArrayTestTrait
                 [$this->equalTo($mapping['hasDefaultValue'])],
                 [$this->equalTo($mapping['description'])],
                 [$this->equalTo($mapping['requiredState'])],
-                [$this->equalTo($mapping['priority'])]
+                [$this->equalTo($mapping['priority'])],
+                [$this->equalTo($mapping['parent'])]
             )->willReturnOnConsecutiveCalls(
                 $mapping['defaultValue'],
                 $mapping['hasDefaultValue'],
                 $mapping['description'],
                 $mapping['requiredState'],
-                $mapping['priority']
+                $mapping['priority'],
+                $mapping['parent']
             );
 
 
