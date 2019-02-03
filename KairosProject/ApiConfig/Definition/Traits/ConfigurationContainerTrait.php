@@ -126,6 +126,7 @@ trait ConfigurationContainerTrait
      */
     public function setChildren(array $children)
     {
+        $this->clearChildren();
         foreach ($children as $child) {
             $this->addChild($child);
         }

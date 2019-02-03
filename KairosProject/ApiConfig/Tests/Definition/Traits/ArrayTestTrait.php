@@ -14,11 +14,11 @@ declare(strict_types=1);
  * @license  MIT <https://opensource.org/licenses/MIT>
  * @link     http://cscfa.fr
  */
-
 namespace KairosProject\ApiConfig\Tests\Definition\Traits;
 
 use KairosProject\ApiConfig\Definition\ArrayMappingConfigurationInterface;
 use KairosProject\ApiConfig\Definition\ConfigurationDefinition;
+use KairosProject\ApiConfig\Definition\ConfigurationDefinitionInterface;
 use KairosProject\ApiConfig\Definition\DefinitionContainerInterface;
 use KairosProject\ApiConfig\Definition\Exception\ConfigurationConversionException;
 use KairosProject\ApiConfig\Definition\Exception\MalformedArrayException;
@@ -355,25 +355,10 @@ trait ArrayTestTrait
         $this->getInvocationBuilder($optionsResolver, $this->once(), 'setRequired')
             ->with($this->equalTo(array_keys($this->getMapping())));
 
-        $this->getInvocationBuilder($optionsResolver, $this->exactly(count($mapping) - 1), 'setAllowedTypes')
-            ->withConsecutive(
-                [$this->equalTo('hasDefaultValue'), $this->equalTo(['bool'])],
-                [$this->equalTo('description'), $this->equalTo(['string', 'null'])],
-                [$this->equalTo('requiredState'), $this->equalTo(['bool'])],
-                [$this->equalTo('priority'), $this->equalTo(['int'])],
-                [$this->equalTo('parent'), $this->equalTo(['null', DefinitionContainerInterface::class])]
-            );
+        $this->configureValidatorAllowedTypes($optionsResolver, $mapping);
 
         $miscResolver = $this->createMock(OptionsResolver::class);
-        $this->getInvocationBuilder($miscResolver, $this->exactly(count($mapping)), 'resolve')
-            ->willReturnOnConsecutiveCalls(
-                $mapping['defaultValue'],
-                $mapping['hasDefaultValue'],
-                $mapping['description'],
-                $mapping['requiredState'],
-                $mapping['priority'],
-                $mapping['parent']
-            );
+        $this->configureOptionsResolver($miscResolver, $mapping);
 
         $resolverFactory = $this->createMock(OptionsResolverFactoryInterface::class);
         $this->getInvocationBuilder($resolverFactory, $this->exactly(2), 'getOptionsResolver')
@@ -383,6 +368,28 @@ trait ArrayTestTrait
         $method = $this->getClassMethod('buildConfigurationArrayValidator');
 
         $this->assertSame($optionsResolver, $method->invoke($instance));
+    }
+
+    /**
+     * Configure validator allowed types
+     *
+     * Configure the mock object to be used as optionsResolver
+     *
+     * @param MockObject $optionsResolver The optionsResolver instance to configure
+     * @param array      $mapping         The current mapping
+     *
+     * @return void
+     */
+    protected function configureValidatorAllowedTypes(MockObject $optionsResolver, array $mapping)
+    {
+        $this->getInvocationBuilder($optionsResolver, $this->exactly(count($mapping) - 1), 'setAllowedTypes')
+            ->withConsecutive(
+                [$this->equalTo('hasDefaultValue'), $this->equalTo(['bool'])],
+                [$this->equalTo('description'), $this->equalTo(['string', 'null'])],
+                [$this->equalTo('requiredState'), $this->equalTo(['bool'])],
+                [$this->equalTo('priority'), $this->equalTo(['int'])],
+                [$this->equalTo('parent'), $this->equalTo(['null', DefinitionContainerInterface::class])]
+            );
     }
 
     /**
@@ -435,6 +442,32 @@ trait ArrayTestTrait
             );
 
         $mapping = $this->getMapping();
+        $this->configureOptionsResolver($optionsResolver, $mapping);
+
+
+        $optionsFactory = $this->createMock(OptionsResolverFactoryInterface::class);
+        $this->getInvocationBuilder($optionsFactory, $this->once(), 'getOptionsResolver')
+            ->willReturn($optionsResolver);
+
+        $instance = $this->getInstance(['optionsResolverFactory' => $optionsFactory]);
+        $method = $this->getClassMethod('getMapping');
+        $this->assertPrivateMethod('getMapping');
+
+        $this->assertEquals($mapping, $method->invoke($instance));
+    }
+
+    /**
+     * Configure optionsResolver
+     *
+     * Configure the mock object to be used as optionsResolver
+     *
+     * @param MockObject $optionsResolver The optionsResolver instance to configure
+     * @param array      $mapping         The current mapping
+     *
+     * @return void
+     */
+    protected function configureOptionsResolver(MockObject $optionsResolver, array $mapping) : void
+    {
         $this->getInvocationBuilder($optionsResolver, $this->exactly(count($mapping)), 'resolve')
             ->withConsecutive(
                 [$this->equalTo($mapping['defaultValue'])],
@@ -451,18 +484,8 @@ trait ArrayTestTrait
                 $mapping['priority'],
                 $mapping['parent']
             );
-
-
-        $optionsFactory = $this->createMock(OptionsResolverFactoryInterface::class);
-        $this->getInvocationBuilder($optionsFactory, $this->once(), 'getOptionsResolver')
-            ->willReturn($optionsResolver);
-
-        $instance = $this->getInstance(['optionsResolverFactory' => $optionsFactory]);
-        $method = $this->getClassMethod('getMapping');
-        $this->assertPrivateMethod('getMapping');
-
-        $this->assertEquals($mapping, $method->invoke($instance));
     }
+
     /**
      * Run evaluate mapping
      *
@@ -480,7 +503,7 @@ trait ArrayTestTrait
      * @return void
      */
     private function runEvaluateMapping(
-        ConfigurationDefinition $instance,
+        ConfigurationDefinitionInterface $instance,
         MockObject $expressionLanguage,
         MockObject $resolverFactory,
         array $returnValues,
