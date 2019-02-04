@@ -17,7 +17,6 @@ declare(strict_types=1);
 namespace KairosProject\ApiConfig\Tests\Definition\Traits;
 
 use KairosProject\ApiConfig\Definition\Exception\DefaultValueException;
-use KairosProject\Tests\AbstractTestClass;
 
 /**
  * Default definition test

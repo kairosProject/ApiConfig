@@ -20,6 +20,8 @@ use KairosProject\ApiConfig\Definition\Traits\ArrayConfigurationTrait;
 use KairosProject\ApiConfig\Definition\Traits\DefaultConfigurationTrait;
 use KairosProject\ApiConfig\Definition\Traits\DescribedConfigurationTrait;
 use KairosProject\ApiConfig\Definition\Traits\NameableConfigurationTrait;
+use KairosProject\ApiConfig\Definition\Traits\NestedConfigurationTrait;
+use KairosProject\ApiConfig\Definition\Traits\PriorityConfigurationTrait;
 use KairosProject\ApiConfig\Definition\Traits\RequireableConfigurationTrait;
 use KairosProject\ApiConfig\Factory\OptionsResolverFactoryInterface;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
@@ -36,13 +38,15 @@ use KairosProject\ApiConfig\Definition\ArrayMappingConfigurationInterface as Map
  * @license  MIT <https://opensource.org/licenses/MIT>
  * @link     http://cscfa.fr
  */
-abstract class AbstractConfigurationDefinition
+abstract class AbstractConfigurationDefinition implements ConfigurationDefinitionInterface
 {
     use DefaultConfigurationTrait,
         DescribedConfigurationTrait,
         NameableConfigurationTrait,
         RequireableConfigurationTrait,
-        ArrayConfigurationTrait;
+        ArrayConfigurationTrait,
+        PriorityConfigurationTrait,
+        NestedConfigurationTrait;
 
     /**
      * AbstractConfigurationDefinition constructor.
@@ -105,8 +109,46 @@ abstract class AbstractConfigurationDefinition
         return array_merge(
             $this->getDefaultConfigurationMapping(),
             $this->getDescribedConfigurationMapping(),
-            $this->getRequireableConfigurationMapping()
+            $this->getRequireableConfigurationMapping(),
+            $this->getPriorityConfiguration(),
+            $this->getParentConfiguration()
         );
+    }
+
+    /**
+     * Get parent configuration
+     *
+     * Return the array to configure the relevant mapping, regarding the parent support.
+     *
+     * @return array
+     */
+    private function getParentConfiguration() : array
+    {
+        return [
+            'parent' => [
+                MappingKey::MAPPING_GET => 'config.getParent()',
+                MappingKey::MAPPING_SET => 'config.setParent(array["parent"])',
+                MappingKey::MAPPING_TYPES => ['null', DefinitionContainerInterface::class]
+            ]
+        ];
+    }
+
+    /**
+     * Get priority configuration
+     *
+     * Return the array to configure the relevant mapping, regarding the priority support.
+     *
+     * @return array
+     */
+    private function getPriorityConfiguration() : array
+    {
+        $priority = [
+            MappingKey::MAPPING_GET => 'config.getPriority()',
+            MappingKey::MAPPING_SET => 'config.setPriority(array["priority"])',
+            MappingKey::MAPPING_TYPES => ['int']
+        ];
+
+        return ['priority' => $priority];
     }
 
     /**

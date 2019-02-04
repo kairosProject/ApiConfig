@@ -17,11 +17,14 @@ declare(strict_types=1);
 namespace KairosProject\ApiConfig\Tests\Definition;
 
 use KairosProject\ApiConfig\Definition\ConfigurationDefinition;
+use KairosProject\ApiConfig\Definition\DefinitionContainerInterface;
 use KairosProject\ApiConfig\Factory\OptionsResolverFactoryInterface;
 use KairosProject\ApiConfig\Tests\Definition\Traits\ArrayTestTrait;
 use KairosProject\ApiConfig\Tests\Definition\Traits\DefaultTestTrait;
 use KairosProject\ApiConfig\Tests\Definition\Traits\DescribedTestTrait;
 use KairosProject\ApiConfig\Tests\Definition\Traits\NameableTestTrait;
+use KairosProject\ApiConfig\Tests\Definition\Traits\NestedTestTrait;
+use KairosProject\ApiConfig\Tests\Definition\Traits\PriorityTestTrait;
 use KairosProject\ApiConfig\Tests\Definition\Traits\RequireableTestTrait;
 use KairosProject\Tests\AbstractTestClass;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
@@ -43,7 +46,9 @@ class ConfigurationDefinitionTest extends AbstractTestClass
         RequireableTestTrait,
         DescribedTestTrait,
         DefaultTestTrait,
-        ArrayTestTrait;
+        ArrayTestTrait,
+        PriorityTestTrait,
+        NestedTestTrait;
 
     /**
      * Test constructor
@@ -92,6 +97,16 @@ class ConfigurationDefinitionTest extends AbstractTestClass
                 'get' => 'config.isRequired()',
                 'set' => 'array["requiredState"] ? config.setRequired() : config.setUnRequired()',
                 'types' => ['bool']
+            ],
+            'priority' => [
+                'get' => 'config.getPriority()',
+                'set' => 'config.setPriority(array["priority"])',
+                'types' => ['int']
+            ],
+            'parent' => [
+                'get' => 'config.getParent()',
+                'set' => 'config.setParent(array["parent"])',
+                'types' => ['null', DefinitionContainerInterface::class]
             ]
         ];
     }
