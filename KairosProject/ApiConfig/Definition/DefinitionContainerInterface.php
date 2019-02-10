@@ -30,6 +30,15 @@ namespace KairosProject\ApiConfig\Definition;
 interface DefinitionContainerInterface extends ConfigurationDefinitionInterface
 {
     /**
+     * Mapping children
+     *
+     * This constant define the mapping key where is located the children conversion definition.
+     *
+     * @var string
+     */
+    public const MAPPING_CHILDREN = 'children';
+
+    /**
      * Add child
      *
      * Add a unique configuration as child. Also automatically update the given instance parent to be the current

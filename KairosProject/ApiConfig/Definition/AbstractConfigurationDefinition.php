@@ -125,7 +125,7 @@ abstract class AbstractConfigurationDefinition implements ConfigurationDefinitio
     private function getParentConfiguration() : array
     {
         return [
-            'parent' => [
+            self::MAPPING_NESTED => [
                 MappingKey::MAPPING_GET => 'config.getParent()',
                 MappingKey::MAPPING_SET => 'config.setParent(array["parent"])',
                 MappingKey::MAPPING_TYPES => ['null', DefinitionContainerInterface::class]
@@ -148,7 +148,7 @@ abstract class AbstractConfigurationDefinition implements ConfigurationDefinitio
             MappingKey::MAPPING_TYPES => ['int']
         ];
 
-        return ['priority' => $priority];
+        return [self::MAPPING_PRIORITY => $priority];
     }
 
     /**
@@ -166,7 +166,7 @@ abstract class AbstractConfigurationDefinition implements ConfigurationDefinitio
             MappingKey::MAPPING_TYPES => ['bool']
         ];
 
-        return ['requiredState' => $requiredState];
+        return [self::MAPPING_REQUIRE => $requiredState];
     }
 
     /**
@@ -184,7 +184,7 @@ abstract class AbstractConfigurationDefinition implements ConfigurationDefinitio
             MappingKey::MAPPING_TYPES => ['string', 'null']
         ];
 
-        return ['description' => $description];
+        return [self::MAPPING_DESCRIPTION => $description];
     }
 
     /**
@@ -210,6 +210,9 @@ abstract class AbstractConfigurationDefinition implements ConfigurationDefinitio
             MappingKey::MAPPING_TYPES => ['bool']
         ];
 
-        return compact('defaultValue', 'hasDefaultValue');
+        return [
+            self::MAPPING_DEFAULT_VALUE => $defaultValue,
+            self::MAPPING_HAS_DEFAULT => $hasDefaultValue
+        ];
     }
 }

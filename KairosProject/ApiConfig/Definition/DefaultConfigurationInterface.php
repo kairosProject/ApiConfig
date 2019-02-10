@@ -32,6 +32,24 @@ use KairosProject\ApiConfig\Definition\Exception\DefaultValueException;
 interface DefaultConfigurationInterface
 {
     /**
+     * Mapping default value
+     *
+     * This constant define the mapping key where is located the default value conversion definition.
+     *
+     * @var string
+     */
+    public const MAPPING_DEFAULT_VALUE = 'defaultValue';
+
+    /**
+     * Mapping has default
+     *
+     * This constant define the mapping key where is located the default state conversion definition.
+     *
+     * @var string
+     */
+    public const MAPPING_HAS_DEFAULT = 'hasDefaultValue';
+
+    /**
      * Set element default value
      *
      * This function is used to define the default value of a configuration element.

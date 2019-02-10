@@ -30,6 +30,15 @@ namespace KairosProject\ApiConfig\Definition;
 interface RequireableConfigurationInterface
 {
     /**
+     * Mapping require
+     *
+     * This constant define the mapping key where is located the required state conversion definition.
+     *
+     * @var string
+     */
+    public const MAPPING_REQUIRE = 'requiredState';
+
+    /**
      * Is element value required
      *
      * Return the required state of the element. This state could be take in account during the validation stage, after

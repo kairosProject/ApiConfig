@@ -30,6 +30,15 @@ namespace KairosProject\ApiConfig\Definition;
 interface NestedDefinitionInterface
 {
     /**
+     * Mapping nested
+     *
+     * This constant define the mapping key where is located the nested conversion definition.
+     *
+     * @var string
+     */
+    public const MAPPING_NESTED = 'parent';
+
+    /**
      * Set parent
      *
      * Set the configuration parent. Automatically update the parent child store with the current instance. If null

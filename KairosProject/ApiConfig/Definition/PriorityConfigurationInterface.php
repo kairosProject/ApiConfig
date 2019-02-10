@@ -17,9 +17,9 @@ declare(strict_types=1);
 namespace KairosProject\ApiConfig\Definition;
 
 /**
- * Described configuration interface
+ * Priority configuration interface
  *
- * This interface define the base methods available for a configuration with a description.
+ * This interface define the base methods for the prioritized configuration.
  *
  * @category Api_Configuration_Definition
  * @package  Kairos_Project
@@ -27,34 +27,34 @@ namespace KairosProject\ApiConfig\Definition;
  * @license  MIT <https://opensource.org/licenses/MIT>
  * @link     http://cscfa.fr
  */
-interface DescribedConfigurationInterface
+interface PriorityConfigurationInterface
 {
     /**
-     * Mapping description
+     * Mapping priority
      *
-     * This constant define the mapping key where is located the description conversion definition.
+     * This constant define the mapping key where is located the priority conversion definition.
      *
      * @var string
      */
-    public const MAPPING_DESCRIPTION = 'description';
+    public const MAPPING_PRIORITY = 'priority';
 
     /**
-     * Set description
+     * Get configuration priority
      *
-     * Set the element description as string value.
+     * Return the priority assigned to the configuration to be used during the merging steps
      *
-     * @param string $description The element description
+     * @return int
+     */
+    public function getPriority(): int;
+
+    /**
+     * Set configuration priority
+     *
+     * Set up the priority assigned to the configuration to be used during the merging steps
+     *
+     * @param int $priority The assigned priority value
      *
      * @return $this
      */
-    public function setDescription(string $description);
-
-    /**
-     * Get description
-     *
-     * Return the description of the element or null if not defined.
-     *
-     * @return string|null
-     */
-    public function getDescription() : ?string;
+    public function setPriority(int $priority);
 }

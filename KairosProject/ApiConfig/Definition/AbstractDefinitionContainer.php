@@ -73,7 +73,7 @@ abstract class AbstractDefinitionContainer extends Definition implements Definit
     {
         $mapping =  parent::getMappingConfiguration();
 
-        $mapping['children'] = [
+        $mapping[self::MAPPING_CHILDREN] = [
             ConfigInterface::MAPPING_GET => 'config.getChildren()',
             ConfigInterface::MAPPING_SET => 'config.setChildren(array["children"])',
             ConfigInterface::MAPPING_TYPES => ['array']

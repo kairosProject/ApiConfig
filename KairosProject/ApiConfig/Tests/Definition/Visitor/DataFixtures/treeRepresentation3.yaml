@@ -1,0 +1,26 @@
+lvl1:
+    priority: 0
+    requiredState: true
+    description: lvl1 desc
+    defaultValue: value
+    hasDefaultValue: true
+    children:
+        lvl2_1:
+            priority: 0
+            requiredState: false
+            description: lvl2_1 desc
+            defaultValue: null
+            hasDefaultValue: false
+            children:
+                lvl3:
+                    priority: 0
+                    requiredState: true
+                    description: lvl3 desc
+                    defaultValue: value
+                    hasDefaultValue: true
+        lvl2_2:
+            priority: 0
+            requiredState: true
+            description: lvl2_2 desc
+            defaultValue: null
+            hasDefaultValue: false

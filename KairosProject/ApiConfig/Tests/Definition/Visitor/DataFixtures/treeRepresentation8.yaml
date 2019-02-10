@@ -1,0 +1,6 @@
+lvl1:
+    priority: 0
+    requiredState: false
+    description: lvl1 desc
+    defaultValue: null
+    hasDefaultValue: false

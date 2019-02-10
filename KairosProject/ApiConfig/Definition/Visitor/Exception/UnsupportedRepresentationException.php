@@ -14,13 +14,14 @@ declare(strict_types=1);
  * @license  MIT <https://opensource.org/licenses/MIT>
  * @link     http://cscfa.fr
  */
-namespace KairosProject\ApiConfig\Definition;
+namespace KairosProject\ApiConfig\Definition\Visitor\Exception;
+
+use KairosProject\ApiConfig\Definition\Exception\ConfigurationConversionException;
 
 /**
- * Configuration definition interface
+ * Unsopported representation exception
  *
- * This interface define the base methods available when using the configuration definitions. It allow to specify the
- * options of a specific element and present the base methods for merging capability.
+ * This exception is used by the definition visitor implementation in case of unsupported given representation.
  *
  * @category Api_Configuration_Definition
  * @package  Kairos_Project
@@ -28,13 +29,6 @@ namespace KairosProject\ApiConfig\Definition;
  * @license  MIT <https://opensource.org/licenses/MIT>
  * @link     http://cscfa.fr
  */
-interface ConfigurationDefinitionInterface extends
-    NameableConfigurationInterface,
-    RequireableConfigurationInterface,
-    DefaultConfigurationInterface,
-    DescribedConfigurationInterface,
-    ArrayConfigurationInterface,
-    NestedDefinitionInterface,
-    PriorityConfigurationInterface
+class UnsupportedRepresentationException extends ConfigurationConversionException
 {
 }
